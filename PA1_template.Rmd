@@ -10,21 +10,21 @@ output:
 
 First let us unzip the data set and load it into a data frame.
 
-```{r load.data, message=FALSE}
+```{r load.data, message=FALSE, cache=TRUE}
 library(dplyr)
 library(lattice)
 activity <- read.csv(unz("activity.zip", "activity.csv"))
 str(activity)
 ```
 
-It can be seen that the data set needs some tidying: the `steps` variable contains `NA`'s, and the `interval` variable is stored as `int` and appears to be continuous though it is not really. As far as imputing missing values constitutes a distinct part of the assignment, we will perform this later on. Combining the `date` and `interval` into a single datetime variable does not seem reasonable as well.
+It can be seen that the data set needs some tidying: the `steps` variable contains `NA`'s. As far as imputing missing values constitutes a distinct part of the assignment, we will perform this later on. Combining the `date` and `interval` into a single datetime variable does not seem reasonable as well.
 
 ## What is mean total number of steps taken per day?
 
-To calculate the total number of steps per day, we group the `steps` variable by different `date` values and plot it as a histogram. We then mark the mean and the median
+To calculate the total number of steps per day, we group the `steps` variable by different `date` values and plot them as a histogram. We then mark the mean and the median
 of the distribution with two vertical lines. The `NA` values are ignored here.
 
-```{r total.steps.per.day}
+```{r total.steps.per.day, fig.height = 480}
 tspd <- activity %>%
       group_by(date) %>%
       summarise(sum_steps = sum(steps))
@@ -44,7 +44,7 @@ Actually, these two lines result in a single one, because the distribution is ce
 
 To plot the average activity pattern, we now group the `steps` variable by different `interval` values. In order to provide even spacing along the x axis and proper labelling, we will add an id of each measurement of the day (there are `24 * 12 = 288` measurements per day) and a variable with the time value stringified. Then we find the maximum of daily activity.
 
-```{r steps.pattern}
+```{r steps.pattern, fig.height = 480}
 sp <- group_by(activity, interval)
 sp <- summarize(sp, ave_steps = mean(steps, na.rm=TRUE))
 xyplot(ave_steps ~ interval, data = sp,
@@ -83,7 +83,7 @@ imputed$mean_steps <- NULL
 
 Now we draw a histogram of total steps per day once more and mark mean and median once more.
 
-```{r total.steps.per.day.imp}
+```{r total.steps.per.day.imp, fig.height = 480}
 tspdi <- group_by(imputed, date) %>%
       summarise(sum_steps = sum(steps))
 histogram(tspdi$sum_steps, breaks=10, col="green", 
@@ -96,14 +96,14 @@ histogram(tspdi$sum_steps, breaks=10, col="green",
      })
 ```
 
-Comparing the figure with the first one, we see that the central bar is higher while the rest is the same as before. This is consistent with what we've done: the number of measurements is now larger (because we count all the measurements we ignored earlier) and each of this measurements adds up to the frequency of the mean value. The mean is still `r formatC(mean(imputed$sum_steps), digits=2, format="f")` and the median has slightly increased and become equal to the mean: `r formatC(median(imputed$sum_steps), digits=2, format="f")`.
+Comparing the figure with the first one, we see that the central bar is higher while the rest is the same as before. This is consistent with what we've done: the number of measurements is now larger (because we count all the measurements we ignored earlier) and each of this measurements adds up to the frequency of the mean value. The mean is still `r formatC(mean(tspdi$sum_steps), digits=2, format="f")` and the median has slightly increased and become equal to the mean: `r formatC(median(tspdi$sum_steps), digits=2, format="f")`.
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
 Now we use the new data set with imputed values and create a factor variable `dayofweek` grouping measurements made on weekdays and on weekends.
 
-```{r weekdays, message=FALSE}
+```{r weekdays, message=FALSE, results='hide'}
 locale <- Sys.getlocale("LC_TIME")
 Sys.setlocale("LC_TIME", "C")
 imputed$dayofweek <- as.Date(imputed$date)
@@ -116,7 +116,7 @@ Sys.setlocale("LC_TIME", locale)
 
 We want to compare average daily activity for weekdays and weekends. To do this, we group our data by `interval` and the `dayofweek` variable and draw a two-panel plot.
 
-```{r wdays.vs.weekends}
+```{r wdays.vs.weekends, fig.height = 480}
 wvw <- imputed %>%
       group_by(interval, dayofweek) %>%
       summarize(ave_steps = mean(steps))
