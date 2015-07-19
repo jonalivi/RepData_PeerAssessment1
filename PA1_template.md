@@ -33,7 +33,7 @@ tspd <- activity %>%
       group_by(date) %>%
       summarise(sum_steps = sum(steps))
 histogram(tspd$sum_steps, breaks=10, col="green", 
-     main="Total number of steps per day", 
+     main="Total Number of Steps per Day", 
      xlab = "Total Steps per Day", type = "count",
      panel = function(x, y, ...) {
         panel.histogram(x, ...)   
@@ -58,7 +58,7 @@ sp$time <- formatC(sp$interval, flag = "0", big.mark = ":", big.interval = 2, wi
 sp$ticks <- sp$interval%/%100 * 60 + sp$interval%%100
 xyplot(ave_steps ~ ticks, data = sp,
      type='l', 
-     main = "Average daily activity", 
+     main = "Average Daily Activity", 
      xlab="Interval", ylab="Steps (mean)",
      scales = list(x = list(
            at = sp$ticks[sp$ticks%%120==0], labels=sp$time[sp$ticks%%120==0])),
@@ -114,7 +114,7 @@ Now we draw a histogram of total steps per day once more and mark mean and media
 tspdi <- group_by(imputed, date) %>%
       summarise(sum_steps = sum(steps))
 histogram(tspdi$sum_steps, breaks=10, col="green", 
-     main="Total number of steps per day", 
+     main="Total Number of Steps per Day", 
      xlab = "Total Steps per Day", type = "count",
      panel = function(x, y, ...) {
         panel.histogram(x, ...)   
