@@ -10,7 +10,7 @@ output:
 
 First let us unzip the data set and load it into a data frame.
 
-```{r load.data, message=FALSE, cache=TRUE}
+```{r load.data, message=FALSE}
 library(dplyr)
 library(lattice)
 activity <- read.csv(unz("activity.zip", "activity.csv"))
@@ -24,13 +24,13 @@ It can be seen that the data set needs some tidying: the `steps` variable contai
 To calculate the total number of steps per day, we group the `steps` variable by different `date` values and plot them as a histogram. We then mark the mean and the median
 of the distribution with two vertical lines. The `NA` values are ignored here.
 
-```{r total.steps.per.day, fig.height = 480}
+```{r total.steps.per.day}
 tspd <- activity %>%
       group_by(date) %>%
       summarise(sum_steps = sum(steps))
 histogram(tspd$sum_steps, breaks=10, col="green", 
      main="Total number of steps per day", 
-     xlab = "Steps", type = "count",
+     xlab = "Total Steps per Day", type = "count",
      panel = function(x, y, ...) {
         panel.histogram(x, ...)   
         panel.abline(v = mean(tspd$sum_steps, na.rm=TRUE), col="red", lwd=2) 
@@ -44,7 +44,7 @@ Actually, these two lines result in a single one, because the distribution is ce
 
 To plot the average activity pattern, we now group the `steps` variable by different `interval` values. In order to provide even spacing along the x axis and proper labelling, we will add an id of each measurement of the day (there are `24 * 12 = 288` measurements per day) and a variable with the time value stringified. Then we find the maximum of daily activity.
 
-```{r steps.pattern, fig.height = 480}
+```{r steps.pattern}
 sp <- group_by(activity, interval)
 sp <- summarize(sp, ave_steps = mean(steps, na.rm=TRUE))
 xyplot(ave_steps ~ interval, data = sp,
@@ -83,12 +83,12 @@ imputed$mean_steps <- NULL
 
 Now we draw a histogram of total steps per day once more and mark mean and median once more.
 
-```{r total.steps.per.day.imp, fig.height = 480}
+```{r total.steps.per.day.imp}
 tspdi <- group_by(imputed, date) %>%
       summarise(sum_steps = sum(steps))
 histogram(tspdi$sum_steps, breaks=10, col="green", 
      main="Total number of steps per day", 
-     xlab = "Steps", type = "count",
+     xlab = "Total Steps per Day", type = "count",
      panel = function(x, y, ...) {
         panel.histogram(x, ...)   
         panel.abline(v = mean(tspdi$sum_steps), col="red", lwd=2) 
@@ -116,12 +116,12 @@ Sys.setlocale("LC_TIME", locale)
 
 We want to compare average daily activity for weekdays and weekends. To do this, we group our data by `interval` and the `dayofweek` variable and draw a two-panel plot.
 
-```{r wdays.vs.weekends, fig.height = 480}
+```{r wdays.vs.wends}
 wvw <- imputed %>%
       group_by(interval, dayofweek) %>%
       summarize(ave_steps = mean(steps))
 xyplot(ave_steps ~ interval | dayofweek, data = wvw, type = 'l',
        xlab = "Interval", ylab = "Steps (average)",
-       main = "Average activity patterns", layout = c(1,2))
+       main = "Weekend/weekday Average activity", layout = c(1,2))
 
 ```
