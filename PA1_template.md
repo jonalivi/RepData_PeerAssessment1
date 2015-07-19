@@ -155,7 +155,7 @@ wvw$time <- formatC(wvw$interval, flag = "0", big.mark = ":", big.interval = 2, 
 wvw$ticks <- wvw$interval%/%100 * 60 + wvw$interval%%100
 xyplot(ave_steps ~ ticks | dayofweek, data = wvw, type = 'l',
        xlab = "Time", ylab = "Steps (average)",
-       main = "Weekend/weekday Average Activity", layout = c(1,2), scales = list(
+       main = "Weekend/Weekday Average Activity", layout = c(1,2), scales = list(
              x=list(at=wvw$ticks[wvw$ticks%%120==0], labels=wvw$time[wvw$ticks%%120==0])))
 ```
 
