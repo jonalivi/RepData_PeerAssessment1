@@ -54,13 +54,17 @@ To plot the average activity pattern, we now group the `steps` variable by diffe
 ```r
 sp <- group_by(activity, interval)
 sp <- summarize(sp, ave_steps = mean(steps, na.rm=TRUE))
-xyplot(ave_steps ~ interval, data = sp,
+sp$time <- formatC(sp$interval, flag = "0", big.mark = ":", big.interval = 2, width = 4)
+sp$ticks <- sp$interval%/%100 * 60 + sp$interval%%100
+xyplot(ave_steps ~ ticks, data = sp,
      type='l', 
      main = "Average daily activity", 
      xlab="Interval", ylab="Steps (mean)",
+     scales = list(x = list(
+           at = sp$ticks[sp$ticks%%120==0], labels=sp$time[sp$ticks%%120==0])),
      panel = function(x, y, ...) {
            panel.xyplot(x, y, ...)
-           panel.abline(v = sp[which(sp$ave_steps == max(sp$ave_steps)),]$interval, col="red", lwd=2)
+           panel.abline(v = sp[which(sp$ave_steps == max(sp$ave_steps)),]$ticks, col="red", lwd=2)
      })
 ```
 
@@ -69,14 +73,14 @@ xyplot(ave_steps ~ interval, data = sp,
 The exact maximum is:
 
 ```r
-sp[which(sp$ave_steps == max(sp$ave_steps)),]
+sp[which(sp$ave_steps == max(sp$ave_steps)),-4]
 ```
 
 ```
-## Source: local data frame [1 x 2]
+## Source: local data frame [1 x 3]
 ## 
-##   interval ave_steps
-## 1      835  206.1698
+##   interval ave_steps  time
+## 1      835  206.1698 08:35
 ```
 
 ## Imputing missing values
@@ -147,9 +151,12 @@ We want to compare average daily activity for weekdays and weekends. To do this,
 wvw <- imputed %>%
       group_by(interval, dayofweek) %>%
       summarize(ave_steps = mean(steps))
-xyplot(ave_steps ~ interval | dayofweek, data = wvw, type = 'l',
-       xlab = "Interval", ylab = "Steps (average)",
-       main = "Weekend/weekday Average activity", layout = c(1,2))
+wvw$time <- formatC(wvw$interval, flag = "0", big.mark = ":", big.interval = 2, width = 4)
+wvw$ticks <- wvw$interval%/%100 * 60 + wvw$interval%%100
+xyplot(ave_steps ~ ticks | dayofweek, data = wvw, type = 'l',
+       xlab = "Time", ylab = "Steps (average)",
+       main = "Weekend/weekday Average activity", layout = c(1,2), scales = list(
+             x=list(at=wvw$ticks[wvw$ticks%%120==0], labels=wvw$time[wvw$ticks%%120==0])))
 ```
 
 ![](PA1_template_files/figure-html/wdays.vs.wends-1.png) 
