@@ -132,3 +132,5 @@ xyplot(ave_steps ~ ticks | dayofweek, data = wvw, type = 'l',
              x=list(at=wvw$ticks[wvw$ticks%%120==0], labels=wvw$time[wvw$ticks%%120==0])))
 
 ```
+
+The two figures show that the patterns are different: while weekdays have a distinctive peak in the morning and relatively little activity during the rest of the day, activity is spread more evenly on weekends.

@@ -160,3 +160,5 @@ xyplot(ave_steps ~ ticks | dayofweek, data = wvw, type = 'l',
 ```
 
 ![](PA1_template_files/figure-html/wdays.vs.wends-1.png) 
+
+The two figures show that the patterns are different: while weekdays have a distinctive peak in the morning and relatively little activity during the rest of the day, activity is spread more evenly on weekends.
